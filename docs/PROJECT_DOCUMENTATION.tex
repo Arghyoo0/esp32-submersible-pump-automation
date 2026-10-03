@@ -1,0 +1,123 @@
+\documentclass[11pt, a4paper]{article}
+
+\usepackage[a4paper, margin=2.5cm]{geometry}
+\usepackage{fontspec}
+\usepackage[english, bidi=basic, provide=*]{babel}
+\babelprovide[import, onchar=ids fonts]{english}
+\babelfont{rm}{Noto Sans}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage[colorlinks=true, linkcolor=blue, urlcolor=blue]{hyperref}
+
+\definecolor{primary}{HTML}{0f4c81}
+\definecolor{secondary}{HTML}{4b5563}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.8em}
+
+\begin{document}
+
+\begin{center}
+    {\Huge \textcolor{primary}{\textbf{Smart Water Tank \& Submersible Pump Automation}}} \\[0.5em]
+    {\Large \textcolor{secondary}{Dual-Node Wireless IoT Automated Fluid Management System}} \\[1em]
+    \rule{\textwidth}{0.4pt}
+\end{center}
+
+\vspace{1em}
+
+\section*{1. Executive Summary}
+This project upgrades a manual 1HP submersible water pump system into a fully automated, cloud-connected smart grid. It uses ultrasonic soundwaves to measure water levels in a concrete rooftop tank with millimetre accuracy. The system automatically maintains water levels, prevents overflow, protects the pump from dry-running, and provides real-time global monitoring via a mobile smartphone application (Blynk 2.0).
+
+\section*{2. Core System Architecture}
+The system is divided into three isolated layers:
+\begin{itemize}
+    \item \textbf{The Roof Node (The Sensor):} An ESP32 microcontroller paired with a waterproof AJ-SR04M ultrasonic sensor sits above the concrete tank. It bounces sound waves off the water's surface to calculate the exact percentage of water remaining. It wirelessly transmits this data every 2 seconds.
+    \item \textbf{The Pump Node (The Master Brain):} A second ESP32 sits downstairs near the KSB motor starter box. It receives the wireless signals from the roof. It runs the logic to decide when to start and stop the pump, and it connects to the home Wi-Fi to push data to the cloud.
+    \item \textbf{The Cloud Application (The UI):} The Blynk 2.0 platform receives data from the Pump Node, displaying live gauges, historical water usage graphs, and an emergency manual override switch on the user's smartphone.
+\end{itemize}
+
+\section*{3. Critical Safety Protocols (Electrical \& Hardware)}
+Safety is the foundational priority of this build. The following strict protocols are engineered into the system:
+
+\begin{itemize}
+    \item \textbf{Submersible Pump Protection (The ``3-Second Rule''):} Submersible pumps require a massive surge of power from a Starting Capacitor to begin spinning. The system uses a dedicated Pulse Timer algorithm. Instead of holding the power on (which would explode the capacitor), the microcontroller triggers a relay for exactly 3 seconds to mimic a human finger pressing the Green Start button, then releases it. A second relay is used to momentarily press the Red Stop button when the tank is full (1-second pulse).
+    \item \textbf{Complete Electrical Isolation:} The low-voltage microcontrollers (3.3V) are physically separated from the high-voltage mains (220V) using opto-isolated magnetic relays.
+    \item \textbf{Master Kill-Switch:} A dedicated 6-Amp physical wall switch is installed on the main bathroom switchboard. Flipping this switch instantly cuts all power to the roof electronics during severe thunderstorms or maintenance.
+    \item \textbf{Weather \& Environmental Proofing:} All exterior electronics are sealed inside an IP65-rated PVC Waterproof Junction Box. The wire entry points utilize gravity drip loops so rainwater cannot run into the enclosures. The ultrasonic sensor is permanently bonded to the concrete lid using industrial-grade M-Seal epoxy putty.
+    \item \textbf{Software Armor (Wave Filter):} The pump unit uses a 3-consecutive-reading confirmation system to ensure that temporary water surface ripples caused by wind or filling do not cause the starter to rapidly click on and off.
+    \item \textbf{Offline Redundancy:} If the home Wi-Fi router loses power, the system automatically falls back to an offline ESP-NOW radio frequency (Channel 1/8).
+    \item \textbf{Hard Overflow Shutoff:} Regardless of user input on the mobile app, if the water level reaches 100\%, the system executes a mandatory hard-stop command to prevent roof flooding.
+\end{itemize}
+
+\section*{4. System Wiring \& Schematics}
+
+\subsection*{4.1 Roof Node Assembly}
+\begin{itemize}
+    \item \textbf{Power Delivery:} 220V line routed from a 6A Master Kill Switch to an IP65 Weatherproof Box on the roof.
+    \item \textbf{Power Conversion:} 5V Mobile Adapter powers the ESP32 Microcontroller.
+    \item \textbf{Sensor Array:} AJ-SR04M Green Board connected to the Waterproof Ultrasonic Probe, mounted to the concrete tank lid via M-Seal Epoxy.
+\end{itemize}
+
+\subsection*{4.2 Pump Node \& KSB Starter Integration}
+\begin{itemize}
+    \item \textbf{Logic Connections:} 
+    \begin{itemize}
+        \item GPIO 19 connects to IN1 on the Dual-Channel Relay (controls the Green START Button simulation via a 3-second pulse).
+        \item GPIO 18 connects to IN2 on the Dual-Channel Relay (controls the Red STOP Button simulation via a 1-second pulse).
+    \end{itemize}
+    \item \textbf{High-Voltage Relay Integration:}
+    \begin{itemize}
+        \item Relay 1 (START): Wired in \textbf{parallel} to the physical Green Start Button (Normally Open / NO terminal).
+        \item Relay 2 (STOP): Wired in \textbf{series} with the physical Red Stop Button (Normally Closed / NC terminal).
+    \end{itemize}
+\end{itemize}
+
+\section*{5. Electrical Specifications \& Load Ratings}
+
+\textbf{5.1 KSB Submersible Pump Motor (Heavy Load)}
+\begin{itemize}
+    \item \textbf{Operating Voltage:} 220V - 240V AC (Single Phase, 50Hz)
+    \item \textbf{Continuous Power Output:} 1 Horsepower (Approx. 746 Watts)
+    \item \textbf{Current:} Approx. 4.0 to 5.0 Amps (Running) / 15 to 20 Amps (Starting Surge)
+\end{itemize}
+
+\textbf{5.2 Microcontrollers \& Telemetry (Control Power)}
+\begin{itemize}
+    \item \textbf{Power Supply:} Itel Mobile Adapters (100-240V AC Input / 5.0V DC at 500mA Output)
+    \item \textbf{ESP32 NodeMCU:} Peak Current Draw approx. 240mA. Total power consumption is less than 1.5 Watts maximum.
+    \item \textbf{AJ-SR04M Sensor:} Operating Current approx. 30mA (Extremely low power, 40 KHz acoustic emission).
+    \item \textbf{Safety Margin:} The 220V roof wire operates at less than 0.2\% of its maximum thermal capacity, acting purely as a low-stress delivery line with zero risk of overheating.
+\end{itemize}
+
+\section*{6. Emergency Operating Procedure (Manual Override)}
+In the event of a catastrophic hardware failure, Wi-Fi outage, or system glitch, the pump can be returned to 100\% manual control:
+\begin{enumerate}
+    \item \textbf{Kill the Smart System:} Flip the dedicated Smart Grid Master Switch to the OFF position. This instantly cuts all power to the ESP32 microcontrollers and relay modules.
+    \item \textbf{Return to Manual Mode:} Walk to the physical KSB Starter Box.
+    \item \textbf{Start/Stop the Pump:} Press and hold the Green Start button for 3 seconds to start. Press the Red Stop button to stop. Because the smart relays are wired appropriately in parallel/series, turning off the smart system makes the buttons behave exactly as they did before installation.
+\end{enumerate}
+
+\section*{7. Bill of Materials (BOM) \& Budget}
+This project utilizes highly cost-effective, readily available micro-electronics, making repairs or part replacements incredibly cheap compared to commercial smart-home solutions.
+
+\vspace{1em}
+\begin{tabular}{@{}lllr@{}}
+\toprule
+\textbf{Category} & \textbf{Item} & \textbf{Quantity} & \textbf{Notes} \\
+\midrule
+Electronics & ESP32 NodeMCU Microcontroller & 2 & IoT Nodes \\
+Electronics & AJ-SR04M Waterproof Ultrasonic Sensor & 1 & Telemetry \\
+Electronics & 5V 2-Channel Opto-isolated Relay & 1 & KSB Interface \\
+Power & 5V 500mA Itel Mobile Adapter & 2 & AC to DC 5V \\
+\addlinespace
+Infrastructure & IP65 Weatherproof PVC Junction Box & 2 & 8x6 inch \\
+Infrastructure & 1.0 sq mm Outdoor-Rated Copper Wire & 15 Meters & 2-Core \\
+Infrastructure & 6-Amp Physical Wall Switch & 1 & Master Kill Switch \\
+Mounting & M-Seal Epoxy Putty / 3M VHB Tape & Various & Environmental Seal \\
+\bottomrule
+\end{tabular}
+\vspace{1em}
+
+\textbf{Cost Analysis:} Total Estimated Hardware Cost is 1,500--2,000 INR. Commercial Equivalent Cost is upwards of 8,000 INR, yielding a cost savings of roughly 75\%.
+
+\end{document}
