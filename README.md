@@ -180,28 +180,28 @@ The KSB starter utilizes a contactor with a continuous running capacitor and a h
 
 ### Contactor & Starter Panel Wiring
 
-![KSB Starter Panel Wiring](docs/images/enclosure_isolation.jpg)
+![KSB Starter Panel Wiring](./docs/images/enclosure_isolation.jpg)
 
 *Figure 1: High-Voltage Contactor & Relay Module Interfacing.*
 Integration of the 2-channel opto-isolated relay board with the 220V KSB starter panel. Relay G (top, blue/white wiring) is connected across the Normally Open (NO) and Common (COM) terminals in parallel with the physical Green Start button. Relay R (bottom, red wiring) is connected across the Normally Closed (NC) and Common (COM) terminals in series with the physical Red Stop button. Wires are stripped to 6mm to prevent plastic insulation clamping inside the blue terminal blocks, with zero exposed live copper strands to eliminate 220V AC flashover hazards.
 
 ### Enclosure Layout & High/Low Voltage Isolation
 
-![Enclosure Internal Isolation](docs/images/enclosure_isolation.jpg)
+![Enclosure Internal Isolation](./docs/images/enclosure_isolation.jpg)
 
 *Figure 2: Internal Enclosure Zoning & Dielectric Isolation.*
 Internal layout of the IP65 junction box demonstrating strict safety segregation between high-voltage (220V AC) mains lines and low-voltage (3.3V/5V DC) logic. The left zone houses incoming AC mains and relay output screw terminals, while the right zone isolates the ESP32 microcontroller and USB step-down converter. A rigid, non-conductive PVC divider barrier is bonded between the sections to physically block dislodged wires from contacting logic traces. Boards are raised on 2mm 3M VHB high-density acrylic foam tape to prevent sharp through-hole solder pins from piercing the casing.
 
 ### Roof Node & Waterproof Transducer Mounting
 
-![AJ-SR04M Sensor Lid Mount](docs/images/sensor_lid_mount.jpg)
+![AJ-SR04M Sensor Lid Mount](./docs/images/sensor_lid_mount.jpg)
 
 *Figure 3: AJ-SR04M Transducer Mounting & Environmental Potting.*
 Weatherproof ultrasonic sensor installation on the concrete overhead tank lid. The AJ-SR04M probe is mounted perpendicularly to the water plane and permanently sealed using fast-curing M-Seal epoxy putty. The epoxy perimeter provides a gas-tight, waterproof seal that shields sensitive electronics against severe heat, rainwater ingress, and persistent internal humidity/condensation. The 4-core signal bundle is twisted to reject RF noise and features a downward gravity drip loop before entering the enclosure.
 
 ### Field Telemetry & RF Penetration Test
 
-![Serial Monitor Field Test](docs/images/serial_monitor_testing.jpg)
+![Serial Monitor Field Test](./docs/images/serial_monitor_testing.jpg)
 
 *Figure 4: Ground-Floor ESP-NOW RF Penetration & Logic Validation.*
 Real-time field diagnostic session over a 115200 baud serial monitor from the ground-floor command position. Telemetry verifies 2.4GHz ESP-NOW packets successfully penetrating two reinforced concrete floor slabs and navigating past the dense water tank. The log captures the "Software Armor" wave debounce filter in action: sequential level updates (14% → 21% → 23% → 34% → 81% → 98%) requiring 3 consecutive confirmations before executing a clean 1-second pulse on GPIO 18 to disengage the KSB motor starter cleanly.
