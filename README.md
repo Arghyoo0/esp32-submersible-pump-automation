@@ -11,6 +11,8 @@ An industrial-grade IoT automated fluid management system engineered for high-po
 > **Formal Documentation:** A complete PDF manual and LaTeX specification are included in this repository:
 > - **[Download Documentation PDF (docs/PROJECT_DOCUMENTATION.pdf)](./docs/PROJECT_DOCUMENTATION.pdf)**
 > - **[LaTeX Source File (docs/PROJECT_DOCUMENTATION.tex)](./docs/PROJECT_DOCUMENTATION.tex)**
+> - **[Pump node code (src/pump_node)](./src/pump_node.ino)**
+> - **[Roof node code (src/pump_node)](./src/roof_node.ino)**
 
 ---
 
