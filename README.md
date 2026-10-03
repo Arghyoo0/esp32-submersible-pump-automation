@@ -187,7 +187,7 @@ Integration of the 2-channel opto-isolated relay board with the 220V KSB starter
 
 ### Enclosure Layout & High/Low Voltage Isolation
 
-![Enclosure Internal Isolation](./docs/enclosure_isolation.jpg)
+![Enclosure Internal Isolation](./docs/enclosure_isolation.png)
 
 *Figure 2: Internal Enclosure Zoning & Dielectric Isolation.*
 Internal layout of the IP65 junction box demonstrating strict safety segregation between high-voltage (220V AC) mains lines and low-voltage (3.3V/5V DC) logic. The left zone houses incoming AC mains and relay output screw terminals, while the right zone isolates the ESP32 microcontroller and USB step-down converter. A rigid, non-conductive PVC divider barrier is bonded between the sections to physically block dislodged wires from contacting logic traces. Boards are raised on 2mm 3M VHB high-density acrylic foam tape to prevent sharp through-hole solder pins from piercing the casing.
